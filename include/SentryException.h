@@ -1,6 +1,6 @@
 /********************************************//**
 * @file SentryException.h
-* @brief A class for Sentry Exceptions
+* @brief Interface for Sentry Exceptions
 * @details https://docs.sentry.io/clientdev/interfaces/exception/
 * @author James Sullivan
 * @version
