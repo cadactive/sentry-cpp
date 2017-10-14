@@ -69,7 +69,7 @@ namespace Sentry {
     FromJson(json);
   }
 
-  /*!
+  /*! @brief Construct from a JSON object
   */
   inline void Message::FromJson(const rapidjson::Value & json) {
     if (json.IsNull()) { return; }
@@ -94,7 +94,7 @@ namespace Sentry {
     }
   }
 
-  /*!
+  /*! @brief Convert to a JSON object
   */
   inline void Message::ToJson(rapidjson::Document &doc) {
     doc.SetObject();

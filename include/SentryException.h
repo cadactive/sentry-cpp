@@ -8,6 +8,7 @@
 ***********************************************/
 #ifndef SENTRY_EXCEPTION_H_
 #define SENTRY_EXCEPTION_H_
+#include "SentryStacktrace.h"
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
@@ -18,10 +19,9 @@
 namespace Sentry {
 
   const char * const JSON_ELEM_EXCEPTION_TYPE = "type";
-  const char * const JSON_ELEM_EXCEPTION_VALUE = "type";
-  const char * const JSON_ELEM_EXCEPTION_MODULE = "type";
-  const char * const JSON_ELEM_STACKTRACE = "type";
-  const char * const JSON_ELEM_THREAD_ID = "type";
+  const char * const JSON_ELEM_EXCEPTION_VALUE = "value";
+  const char * const JSON_ELEM_EXCEPTION_MODULE = "module";
+  const char * const JSON_ELEM_THREAD_ID = "thread_id";
 
 } // namespace Sentry
 
@@ -36,12 +36,13 @@ namespace Sentry {
   public:
     Exception();
     Exception(const std::string &type, const std::string &value, 
-      const std::string  &module, const std::string  &stacktrace, const int &thread_id = -1);
+      const std::string  &module, const Stacktrace &stacktrace, const int &thread_id = -1);
     Exception(const rapidjson::Value &json);
 
     const std::string& GetType() const;
     const std::string& GetValue() const;
     const std::string& GetModule() const;
+    const Stacktrace& GetStacktrace() const;
     const int& GetThreadId() const;
 
     void ToJson(rapidjson::Document &doc);
@@ -54,7 +55,7 @@ namespace Sentry {
     std::string _value;
     std::string  _module;
     int _thread_id;
-    std::string  _stacktrace; // " : {sentry.interfaces.Stacktrace}
+    Stacktrace _stacktrace;
   }; // class Exception
 
   /*!
@@ -66,7 +67,7 @@ namespace Sentry {
 
   inline Exception::Exception(
     const std::string &type, const std::string &value, 
-    const std::string  &module, const std::string  &stacktrace, const int &thread_id) :
+    const std::string  &module, const Stacktrace &stacktrace, const int &thread_id) :
     _type(type), _value(value), _module(module), _stacktrace(stacktrace), _thread_id(thread_id) {
 
   }
@@ -81,6 +82,10 @@ namespace Sentry {
 
   inline const std::string & Exception::GetModule() const {
     return _module;
+  }
+
+  inline const Stacktrace & Exception::GetStacktrace() const {
+    return _stacktrace;
   }
 
   inline const int & Exception::GetThreadId() const {
@@ -144,8 +149,8 @@ namespace Sentry {
     if (json.HasMember(JSON_ELEM_STACKTRACE)) {
       const rapidjson::Value &stacktrace = json[JSON_ELEM_STACKTRACE];
       if (!stacktrace.IsNull()) {
-        if (stacktrace.IsString()) {
-          _stacktrace = stacktrace.GetString();
+        if (stacktrace.IsObject()) {
+          _stacktrace = stacktrace;
         }
       }
     }
@@ -179,10 +184,10 @@ namespace Sentry {
 		  doc.AddMember(rapidjson::StringRef(JSON_ELEM_EXCEPTION_VALUE), _thread_id, allocator);
 	  }
 
-	  if (!_stacktrace.empty()) {
-		  rapidjson::Value stacktrace(rapidjson::kStringType);
-		  stacktrace.SetString(_stacktrace.data(), static_cast<rapidjson::SizeType>(_stacktrace.size()), allocator);
-		  doc.AddMember(rapidjson::StringRef(JSON_ELEM_EXCEPTION_MODULE), stacktrace, allocator);
+	  if (!_stacktrace.IsValid()) {
+      rapidjson::Document subdoc;
+      _stacktrace.ToJson(subdoc);
+		  doc.AddMember(rapidjson::StringRef(JSON_ELEM_STACKTRACE), subdoc, allocator);
 	  }
 	}
 

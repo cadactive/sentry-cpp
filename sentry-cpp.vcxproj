@@ -119,7 +119,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\SentryException.h" />
+    <ClInclude Include="include\SentryFrame.h" />
     <ClInclude Include="include\SentryMessage.h" />
+    <ClInclude Include="include\SentryStacktrace.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
