@@ -33,6 +33,12 @@
     <ClInclude Include="include\SentryContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SentryUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SentrySDK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore">
