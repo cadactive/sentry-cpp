@@ -40,7 +40,7 @@ namespace Sentry {
     const std::string& GetName() const;
     const std::string& GetVersion() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -102,7 +102,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void SDK::ToJson(rapidjson::Document &doc) {
+  inline void SDK::ToJson(rapidjson::Document &doc) const {
     doc.SetObject();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 

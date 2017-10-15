@@ -125,6 +125,7 @@
     <ClInclude Include="include\SentryMessage.h" />
     <ClInclude Include="include\SentrySDK.h" />
     <ClInclude Include="include\SentryStacktrace.h" />
+    <ClInclude Include="include\SentryThreads.h" />
     <ClInclude Include="include\SentryUser.h" />
   </ItemGroup>
   <ItemGroup>

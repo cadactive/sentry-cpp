@@ -18,6 +18,8 @@
 ***********************************************/
 namespace Sentry {
 
+  const char * const JSON_ELEM_USER = "user";
+
   const char * const JSON_ELEM_USER_ID = "id";
   const char * const JSON_ELEM_USER_EMAIL = "email";
   const char * const JSON_ELEM_USER_USERNAME = "username";
@@ -44,7 +46,7 @@ namespace Sentry {
     const std::string &GetIPAddress() const;
     const std::map<std::string, std::string> &GetAdditionalFields() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -152,7 +154,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void User::ToJson(rapidjson::Document &doc) {
+  inline void User::ToJson(rapidjson::Document &doc) const {
     doc.SetObject();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -180,7 +182,7 @@ namespace Sentry {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_USER_IP_ADDRESS), ip_address, allocator);
     }
 
-    for (auto additional = _additional_fields.begin(); additional != _additional_fields.end(); ++additional) {
+    for (auto additional = _additional_fields.cbegin(); additional != _additional_fields.cend(); ++additional) {
       rapidjson::Value key(rapidjson::kStringType);
       key.SetString(additional->first.data(), static_cast<rapidjson::SizeType>(additional->first.size()), allocator);
 

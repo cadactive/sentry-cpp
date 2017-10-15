@@ -18,10 +18,11 @@
 ***********************************************/
 namespace Sentry {
 
+  const char * const JSON_ELEM_EXCEPTION = "exception";
+
   const char * const JSON_ELEM_EXCEPTION_TYPE = "type";
   const char * const JSON_ELEM_EXCEPTION_VALUE = "value";
   const char * const JSON_ELEM_EXCEPTION_MODULE = "module";
-  const char * const JSON_ELEM_THREAD_ID = "thread_id";
 
 } // namespace Sentry
 
@@ -45,7 +46,7 @@ namespace Sentry {
     const Stacktrace& GetStacktrace() const;
     const int& GetThreadId() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -166,7 +167,7 @@ namespace Sentry {
 
 	/*!
 	*/
-  inline void Exception::ToJson(rapidjson::Document &doc) {
+  inline void Exception::ToJson(rapidjson::Document &doc) const {
     doc.SetObject();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 

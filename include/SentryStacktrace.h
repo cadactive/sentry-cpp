@@ -21,8 +21,11 @@
 namespace Sentry {
 
   const char * const JSON_ELEM_STACKTRACE = "stacktrace";
+
   const char * const JSON_ELEM_FRAMES = "frames";
   const char * const JSON_ELEM_FRAMES_OMITTED = "frames_omitted";
+
+  const char * const JSON_ELEM_THREAD_ID = "thread_id";
 
 } // namespace Sentry
 
@@ -43,7 +46,7 @@ namespace Sentry {
 
     const std::vector<Frame>& GetFrames() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -73,7 +76,7 @@ namespace Sentry {
   /*! @brief Check if the Stacktrace's frames are all valid
   */
   inline bool Stacktrace::IsValid() const {
-    for (auto frame = _frames.begin(); frame != _frames.end(); ++frame) {
+    for (auto frame = _frames.cbegin(); frame != _frames.cend(); ++frame) {
       if (!frame->IsValid()) {
         return false;
       }
@@ -108,12 +111,12 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void Stacktrace::ToJson(rapidjson::Document &doc) {
+  inline void Stacktrace::ToJson(rapidjson::Document &doc) const {
     doc.SetObject();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
     rapidjson::Value frames(rapidjson::kArrayType);
-    for (auto frame = _frames.begin(); frame != _frames.end(); ++frame) {
+    for (auto frame = _frames.cbegin(); frame != _frames.cend(); ++frame) {
       if (!frame->IsValid()) { continue; }
 
       rapidjson::Document frame_doc;

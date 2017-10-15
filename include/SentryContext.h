@@ -49,7 +49,7 @@ namespace Sentry {
     const std::string& GetType() const;
     const std::string& GetName() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -116,7 +116,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void ContextGeneral::ToJson(rapidjson::Document &doc) {
+  inline void ContextGeneral::ToJson(rapidjson::Document &doc) const {
     doc.SetObject();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -145,7 +145,7 @@ namespace Sentry {
     const std::string& GetKernelVersion() const;
     const bool IsRooted() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -267,7 +267,7 @@ namespace Sentry {
 
     const std::string& GetVersion() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);

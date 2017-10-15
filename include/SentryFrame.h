@@ -59,7 +59,7 @@ namespace Sentry {
 
     bool IsValid() const;
 
-    void ToJson(rapidjson::Document &doc);
+    void ToJson(rapidjson::Document &doc) const;
 
   protected:
     void FromJson(const rapidjson::Value &json);
@@ -293,7 +293,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void Frame::ToJson(rapidjson::Document &doc) {
+  inline void Frame::ToJson(rapidjson::Document &doc) const {
     doc.SetObject();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -325,7 +325,7 @@ namespace Sentry {
 
     if (!_vars.empty()) {
       rapidjson::Value vars(rapidjson::kObjectType);
-      for (auto var = _vars.begin(); var != _vars.end(); ++var) {
+      for (auto var = _vars.cbegin(); var != _vars.cend(); ++var) {
         rapidjson::Value key(rapidjson::kStringType);
         key.SetString(var->first.data(), static_cast<rapidjson::SizeType>(var->first.size()), allocator);
 
@@ -351,7 +351,7 @@ namespace Sentry {
 
     if (!_pre_context.empty()) {
       rapidjson::Value context_line(rapidjson::kArrayType);
-      for (auto context = _pre_context.begin(); context != _pre_context.end(); ++context) {
+      for (auto context = _pre_context.cbegin(); context != _pre_context.cend(); ++context) {
         rapidjson::Value line(rapidjson::kStringType);
         line.SetString(context->data(), static_cast<rapidjson::SizeType>(context->size()), allocator);
         context_line.PushBack(line, allocator);
@@ -361,7 +361,7 @@ namespace Sentry {
 
     if (!_post_context.empty()) {
       rapidjson::Value context_line(rapidjson::kArrayType);
-      for (auto context = _post_context.begin(); context != _post_context.end(); ++context) {
+      for (auto context = _post_context.cbegin(); context != _post_context.cend(); ++context) {
         rapidjson::Value line(rapidjson::kStringType);
         line.SetString(context->data(), static_cast<rapidjson::SizeType>(context->size()), allocator);
         context_line.PushBack(line, allocator);
