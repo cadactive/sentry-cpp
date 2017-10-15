@@ -53,7 +53,10 @@ namespace Sentry {
   */
   inline Message::Message() {}
 
-  inline Message::Message(const std::string &type, const std::string &_message) {}
+  inline Message::Message(const std::string &message, const std::string &format_params) :
+    _message(message), _format_params(format_params) {
+  
+  }
 
   inline const std::string & Message::GetMessage() const {
     return _message;
