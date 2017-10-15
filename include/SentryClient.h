@@ -83,7 +83,8 @@ namespace Sentry {
 *	Method Definitions
 ***********************************************/
 namespace Sentry {
-  DSN::DSN(const std::string &dsn) {
+
+  inline DSN::DSN(const std::string &dsn) {
     ParseDSN(dsn);
   }
 

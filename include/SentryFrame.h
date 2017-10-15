@@ -369,7 +369,7 @@ namespace Sentry {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_VARS), vars, allocator);
     } // vars
 
-    if (!_lineno > 0) {
+    if (_lineno > 0) {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_LINE_NO), _lineno, allocator);
     } // lineno
 
