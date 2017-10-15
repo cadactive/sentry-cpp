@@ -25,9 +25,9 @@ namespace Sentry {
 
 } // namespace Sentry
 
-  /***********************************************
-  *	Classes
-  ***********************************************/
+/***********************************************
+*	Classes
+***********************************************/
 namespace Sentry {
 
   /*! @brief An SDK in Sentry
@@ -51,6 +51,12 @@ namespace Sentry {
 
   }; // class SDK
 
+} // namespace Sentry
+
+/***********************************************
+*	Method Definitions
+***********************************************/
+namespace Sentry {
   /*!
   */
   inline SDK::SDK() : _name(SDK_NAME), _version(SDK_VERSION) {}

@@ -118,6 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\SentryClient.h" />
     <ClInclude Include="include\SentryContext.h" />
     <ClInclude Include="include\SentryException.h" />
     <ClInclude Include="include\SentryFrame.h" />

@@ -60,6 +60,12 @@ namespace Sentry {
 
   }; // class ContextGeneral
 
+} // namespace Sentry
+
+/***********************************************
+*	Method Definitions
+***********************************************/
+namespace Sentry {
   /*!
   */
   inline ContextGeneral::ContextGeneral() {}

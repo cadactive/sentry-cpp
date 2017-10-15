@@ -89,6 +89,12 @@ namespace Sentry {
 
   }; // class Frame
 
+} // namespace Sentry
+
+/***********************************************
+*	Method Definitions
+***********************************************/
+namespace Sentry {
   /*!
   */
   inline Frame::Frame() : 

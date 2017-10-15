@@ -25,9 +25,9 @@ namespace Sentry {
 
 } // namespace Sentry
 
-  /***********************************************
-  *	Classes
-  ***********************************************/
+/***********************************************
+*	Classes
+***********************************************/
 namespace Sentry {
 
   /*! @brief An User in Sentry
@@ -54,10 +54,16 @@ namespace Sentry {
     std::string _email;
     std::string _username;
     std::string _ip_address;
-    std::map<std::string, std::string> _additional_user_fields;
+    std::map<std::string, std::string> _additional_fields;
 
   }; // class User
 
+} // namespace Sentry
+
+/***********************************************
+*	Method Definitions
+***********************************************/
+namespace Sentry {
   /*!
   */
   inline User::User() {}
@@ -67,7 +73,7 @@ namespace Sentry {
     _email(email),
     _username(username),
     _ip_address(ip_address),
-    _additional_user_fields(additional_user_fields) {
+    _additional_fields(additional_user_fields) {
 
   }
 
@@ -88,7 +94,7 @@ namespace Sentry {
   }
 
   inline const std::map<std::string, std::string>& User::GetAdditionalFields() const {
-    return _additional_user_fields;
+    return _additional_fields;
   }
 
   /*!
@@ -137,7 +143,7 @@ namespace Sentry {
       } else {
         if (strlen(member->name.GetString()) > 0) {
           if (member->value.IsString()) {
-            _additional_user_fields[member->name.GetString()] = member->value.GetString();
+            _additional_fields[member->name.GetString()] = member->value.GetString();
           }
         }
       }
@@ -174,7 +180,7 @@ namespace Sentry {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_USER_IP_ADDRESS), ip_address, allocator);
     }
 
-    for (auto additional = _additional_user_fields.begin(); additional != _additional_user_fields.end(); ++additional) {
+    for (auto additional = _additional_fields.begin(); additional != _additional_fields.end(); ++additional) {
       rapidjson::Value key(rapidjson::kStringType);
       key.SetString(additional->first.data(), static_cast<rapidjson::SizeType>(additional->first.size()), allocator);
 

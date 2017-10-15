@@ -50,7 +50,15 @@ namespace Sentry {
 
   private:
     std::vector<Frame> _frames;
+
   }; // class Stacktrace
+
+} // namespace Sentry
+
+/***********************************************
+*	Method Definitions
+***********************************************/
+namespace Sentry {
 
   /*!
   */

@@ -56,7 +56,15 @@ namespace Sentry {
     std::string  _module;
     int _thread_id;
     Stacktrace _stacktrace;
+
   }; // class Exception
+
+} // namespace Sentry
+
+/***********************************************
+*	Method Definitions
+***********************************************/
+namespace Sentry {
 
   /*!
   */
