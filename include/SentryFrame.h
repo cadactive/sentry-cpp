@@ -65,6 +65,9 @@ namespace Sentry {
     const std::string& GetModule() const;
 
     // Optional Members
+    int GetLineNumber() const;
+    void SetLineNumber(const int &line_no);
+
     bool IsInApp() const;
     void SetIsInApp(const bool &in_app);
 
@@ -140,6 +143,14 @@ namespace Sentry {
 
   inline const std::string & Frame::GetModule() const {
     return _module;
+  }
+
+  inline int Frame::GetLineNumber() const {
+    return _lineno;
+  }
+
+  inline void Frame::SetLineNumber(const int & line_no) {
+    _lineno = line_no;
   }
 
   /*! @brief Construct from a JSON object

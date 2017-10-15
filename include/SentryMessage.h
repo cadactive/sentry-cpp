@@ -75,6 +75,7 @@ namespace Sentry {
   class Message {
   public:
     Message();
+    Message(const std::string &message, const MessageLevel &message_level = MessageLevel::MESSAGE_UNDEFINED);
     Message(const std::string &message, const std::string &format_params, const MessageLevel &message_level = MessageLevel::MESSAGE_UNDEFINED);
     Message(const rapidjson::Value &json);
 
@@ -84,6 +85,7 @@ namespace Sentry {
     const std::string& GetMessage() const;
     const std::string& GetFormatParams() const;
     const std::map<std::string, std::string>& GetAdditionalFields() const;
+    void SetAdditionalFields(const std::map<std::string, std::string>& additional_fields);
 
     void ToJson(rapidjson::Document &doc) const;
 
@@ -184,6 +186,11 @@ namespace Sentry {
   */
   inline Message::Message() {}
 
+  inline Message::Message(const std::string & message, const MessageLevel & message_level) :
+    _message(message), _level(message_level) {
+
+  }
+
   inline Message::Message(const std::string &message, const std::string &format_params, const MessageLevel &level) :
     _message(message), _format_params(format_params), _level(level) {
   
@@ -203,6 +210,10 @@ namespace Sentry {
 
   inline const std::map<std::string, std::string>& Message::GetAdditionalFields() const {
     return _additional_fields;
+  }
+
+  inline void Message::SetAdditionalFields(const std::map<std::string, std::string>& additional_fields) {
+    _additional_fields = additional_fields;
   }
 
   /*!

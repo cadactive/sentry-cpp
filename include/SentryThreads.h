@@ -54,6 +54,8 @@ namespace Sentry {
     void SetIsCurrent(const bool &is_current);
 
     const std::string& GetName() const;
+    void SetName(const std::string &thread_name);
+
     const Stacktrace& GetStacktrace() const;
 
     void ToJson(rapidjson::Document &doc) const;
@@ -166,6 +168,10 @@ namespace Sentry {
     return _name;
   }
 
+  inline void Thread::SetName(const std::string & thread_name) {
+    _name = thread_name;
+  }
+
   /*! @brief Construct from a JSON object
   */
   inline void Thread::FromJson(const rapidjson::Value & json) {
@@ -236,8 +242,8 @@ namespace Sentry {
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREAD_CURRENT), _is_current, allocator);
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREAD_CRASHED), _is_crashed, allocator);
 
-    if (!_stacktrace.IsValid()) {
-      rapidjson::Document subdoc;
+    if (_stacktrace.IsValid()) {
+      rapidjson::Document subdoc(&allocator);
       _stacktrace.ToJson(subdoc);
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_STACKTRACE), subdoc, allocator);
     }
@@ -293,9 +299,8 @@ namespace Sentry {
 
     rapidjson::Value threads(rapidjson::kArrayType);
     for (auto thread = _threads.cbegin(); thread != _threads.end(); ++thread) {
-      rapidjson::Document subdoc;
+      rapidjson::Document subdoc(&allocator);
       thread->ToJson(subdoc);
-
       threads.PushBack(subdoc, allocator);
     }
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREADS_VALUES), threads, allocator);

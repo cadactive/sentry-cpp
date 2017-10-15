@@ -29,7 +29,7 @@ namespace Sentry {
   const char * const JSON_ELEM_OS_KERNEL_VERSION = "kernel_version";
   const char * const JSON_ELEM_OS_ROOTED = "rooted";
 
-  const char * const JSON_ELEM_CONTEXT_RUNTIME = "os";
+  const char * const JSON_ELEM_CONTEXT_RUNTIME = "runtime";
   const char * const JSON_ELEM_RUNTIME_VERSION = "version";
 
 } // namespace Sentry
@@ -287,7 +287,7 @@ namespace Sentry {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_KERNEL_VERSION), kernel_version, allocator);
     }
 
-    doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_ROOTED), _is_rooted, allocator);
+    // doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_ROOTED), _is_rooted, allocator);
   }
 
   /*!

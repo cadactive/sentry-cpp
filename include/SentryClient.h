@@ -22,9 +22,6 @@ namespace Sentry {
   const char * const CLIENT_NAME = "sentry-cpp";
   const char * const CLIENT_VERSION = "0.0.1.0";
 
-  const char * const JSON_ELEM_MESSAGE = "message";
-  const char * const JSON_ELEM_FORMAT_PARAMS = "params";
-
 } // namespace Sentry
 
 /***********************************************

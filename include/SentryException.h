@@ -203,7 +203,7 @@ namespace Sentry {
 	  }
 
 	  if (!_stacktrace.IsValid()) {
-      rapidjson::Document subdoc;
+      rapidjson::Document subdoc(&allocator);
       _stacktrace.ToJson(subdoc);
 		  doc.AddMember(rapidjson::StringRef(JSON_ELEM_STACKTRACE), subdoc, allocator);
 	  }

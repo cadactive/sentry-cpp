@@ -127,7 +127,7 @@ namespace Sentry {
     for (auto frame = _frames.cbegin(); frame != _frames.cend(); ++frame) {
       if (!frame->IsValid()) { continue; }
 
-      rapidjson::Document frame_doc;
+      rapidjson::Document frame_doc(&allocator);
       frame->ToJson(frame_doc);
       
       frames.PushBack(frame_doc, allocator);
