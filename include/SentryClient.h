@@ -199,7 +199,7 @@ namespace Sentry {
   */
   inline const std::string Client::GenerateAuthentication() const {
     std::string auth = "X-Sentry-Auth: Sentry ";
-    auth += "sentry_version = 5";
+    auth += "sentry_version=7";
     auth += ",";
 
     auth += "sentry_client=";
