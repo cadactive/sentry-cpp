@@ -13,3 +13,4 @@ Before you use sentry-cpp, you need install the following libraries.
 
 * rapidjson
 * libcurl
+* googletest
