@@ -50,6 +50,9 @@ namespace Sentry {
     const int& GetThreadID() const;
     const bool& IsCrashed() const;
     const bool& IsCurrent() const;
+    void SetIsCrashed(const bool &is_crashed);
+    void SetIsCurrent(const bool &is_current);
+
     const std::string& GetName() const;
     const Stacktrace& GetStacktrace() const;
 
@@ -145,6 +148,14 @@ namespace Sentry {
 
   inline const bool& Thread::IsCurrent() const {
     return _is_current;
+  }
+
+  inline void Thread::SetIsCrashed(const bool &is_crashed) {
+    _is_crashed = is_crashed;
+  }
+
+  inline void Thread::SetIsCurrent(const bool &is_current) {
+    _is_current = is_current;
   }
 
   inline const Stacktrace & Thread::GetStacktrace() const {
