@@ -8,19 +8,18 @@
 ***********************************************/
 #ifndef SENTRY_STACKTRACE_H_
 #define SENTRY_STACKTRACE_H_
+#include <string>
 #include <vector>
+
+#include "SentryFrame.h"
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
-
-#include "SentryFrame.h"
 
 /***********************************************
 *	Constants
 ***********************************************/
 namespace Sentry {
-
-  const char * const JSON_ELEM_STACKTRACE = "stacktrace";
 
   const char * const JSON_ELEM_FRAMES = "frames";
   const char * const JSON_ELEM_FRAMES_OMITTED = "frames_omitted";
@@ -40,6 +39,7 @@ namespace Sentry {
   class Stacktrace {
   public:
     Stacktrace();
+    Stacktrace(const std::vector<Frame> &frames);
     Stacktrace(const rapidjson::Value &json);
 
     bool IsValid() const;
@@ -67,6 +67,10 @@ namespace Sentry {
   */
   inline Stacktrace::Stacktrace() { }
 
+  inline Stacktrace::Stacktrace(const std::vector<Frame>& frames) :
+    _frames(frames) {
+  }
+
   /*!
   */
   inline Stacktrace::Stacktrace(const rapidjson::Value &json) {
@@ -76,6 +80,10 @@ namespace Sentry {
   /*! @brief Check if the Stacktrace's frames are all valid
   */
   inline bool Stacktrace::IsValid() const {
+    if (_frames.empty()) { 
+      return false; 
+    }
+
     for (auto frame = _frames.cbegin(); frame != _frames.cend(); ++frame) {
       if (!frame->IsValid()) {
         return false;

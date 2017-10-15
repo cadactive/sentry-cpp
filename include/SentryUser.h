@@ -8,6 +8,7 @@
 ***********************************************/
 #ifndef SENTRY_USER_H_
 #define SENTRY_USER_H_
+#include <string>
 #include <map>
 
 #include "rapidjson\rapidjson.h"
@@ -37,14 +38,19 @@ namespace Sentry {
   class User {
   public:
     User();
-    User(const std::string &user_unique_id, const std::string &email, const std::string &username, const std::string &ip_address, const std::map<std::string, std::string> &additional_user_fields = std::map<std::string, std::string>());
+    User(const std::string &user_unique_id, const std::string &email, 
+      const std::string &username, const std::string &ip_address = std::string(),
+      const std::map<std::string, std::string> &additional_user_fields = std::map<std::string, std::string>());
     User(const rapidjson::Value &json);
+
+    bool IsValid() const;
 
     const std::string &GetUserUniqueID() const;
     const std::string &GetEmail() const;
     const std::string &GetUsername() const;
     const std::string &GetIPAddress() const;
     const std::map<std::string, std::string> &GetAdditionalFields() const;
+    void SetAdditionalFields(const std::map<std::string, std::string>& additional_fields);
 
     void ToJson(rapidjson::Document &doc) const;
 
@@ -99,10 +105,21 @@ namespace Sentry {
     return _additional_fields;
   }
 
+  inline void User::SetAdditionalFields(const std::map<std::string, std::string>& additional_fields) {
+    _additional_fields = additional_fields;
+  }
+
   /*!
   */
   inline User::User(const rapidjson::Value &json) {
     FromJson(json);
+  }
+
+  inline bool User::IsValid() const {
+    if (_email.empty() && _username.empty() && _user_unique_id.empty()) {
+      return false;
+    }
+    return true;
   }
 
   /*! @brief Construct from a JSON object

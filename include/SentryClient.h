@@ -9,6 +9,7 @@
 #ifndef SENTRY_CLIENT_H_
 #define SENTRY_CLIENT_H_
 #include <ctime>
+#include <string>
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
@@ -68,6 +69,7 @@ namespace Sentry {
 
     static const std::string GetClientInfo();
     const std::string GenerateAuthentication() const;
+    static const std::string GenerateTimestampString(const std::time_t &time);
 
   private:
     DSN _dsn;
@@ -115,32 +117,53 @@ namespace Sentry {
   /*! @brief Parse the DSN Format (as per API):
   *   @details {PROTOCOL}://{PUBLIC_KEY}:{SECRET_KEY}@{HOST}/{PATH}{PROJECT_ID}
   */
-  void Sentry::DSN::ParseDSN(const std::string & dsn) {
+  inline void Sentry::DSN::ParseDSN(const std::string & dsn) {
     std::string tmp_str;
 
     // Protocol
-    _protocol = dsn.substr(0, dsn.find(':'));
+    std::string rest = dsn;
 
-    // Project_id
-    size_t found = dsn.find_last_of("/");
-    _project_id = dsn.substr(found + 1);
-    tmp_str = dsn.substr(0, found);
+    size_t found = rest.find_first_of("://");
+    if (found == std::string::npos) { return; }
+
+    std::string protocol = rest.substr(0, found);
+    rest = rest.substr(found + 3);
+
+    // Public and Secret key
+    found = rest.find_first_of(':');
+    if (found == std::string::npos) { return; }
+
+    std::string public_key = rest.substr(0, found);
+    rest = rest.substr(found + 1);
+
+    found = rest.find_first_of('@');
+    if (found == std::string::npos) { return; }
+
+    std::string secret_key = rest.substr(0, found);
+    rest = rest.substr(found + 1);
 
     // URL
-    found = dsn.find_last_of("@");
-    _url = _protocol;
-    _url.append(tmp_str.substr(found + 1));
-    _url.append("/api/");
-    _url.append(_project_id);
-    _url.append("/store/");
+    found = rest.find_first_of('/');
+    if (found == std::string::npos) { return; }
+    std::string host = rest.substr(0, found);
+    rest = rest.substr(found + 1);
 
-    // public and secret key
-    tmp_str = dsn.substr(0, found);
-    found = tmp_str.find_first_of("//");
-    std::string key = tmp_str.substr(found + 2);
-    found = key.find_last_of(":");
-    _public_key = key.substr(0, found);
-    _secret_key = key.substr(found + 1);
+    std::string project_id = rest;
+
+    if (!protocol.empty() && !host.empty() && !project_id.empty()) {
+      std::string url = protocol;
+      url.append("://");
+      url.append(host);
+      url.append("/api/");
+      url.append(project_id);
+      url.append("/store/");
+
+      _protocol = protocol;
+      _project_id = project_id;
+      _url = url;
+      _public_key = public_key;
+      _secret_key = secret_key;
+    }
   }
 
   /*!
@@ -175,20 +198,33 @@ namespace Sentry {
   */
   inline const std::string Client::GenerateAuthentication() const {
     std::string auth = "X-Sentry-Auth: Sentry ";
-    auth += "sentry_version = 5,";
+    auth += "sentry_version = 5";
+    auth += ",";
+
     auth += "sentry_client=";
     auth += GetClientInfo();
+    auth += ",";
+
     auth += "sentry_timestamp=";
-    std::time_t time = std::time(nullptr);
-    auth += std::asctime(std::localtime(&time));
-    auth += "<current timestamp>, ";
+    auth += std::to_string(std::time(nullptr));
+    auth += ",";
+
     auth += "sentry_key=";
     auth += _dsn.GetPublicKey();
     auth += ",";
+
     auth += "sentry_secret=";
     auth += _dsn.GetSecretKey();
 
     return auth;
+  }
+
+  inline const std::string Client::GenerateTimestampString(const std::time_t &time) {
+    struct tm buf;
+    localtime_s(&buf, &time);
+    char timestamp[500];
+    asctime_s(timestamp, &buf);
+    return timestamp;
   }
 
 } // namespace Sentry

@@ -8,6 +8,8 @@
 ***********************************************/
 #ifndef SENTRY_MESSAGE_H_
 #define SENTRY_MESSAGE_H_
+#include <string>
+#include <iostream>
 #include <map>
 
 #include "rapidjson\rapidjson.h"
@@ -51,6 +53,11 @@ namespace Sentry {
     MessageLevel(const MessageLevelEnum &type = MessageLevel::MESSAGE_UNDEFINED);
     MessageLevel(const std::string &value);
 
+    bool operator == (const MessageLevel& other) const;
+    bool operator != (const MessageLevel& other) const;
+    bool operator < (const MessageLevel& other) const;
+    bool operator > (const MessageLevel& other) const;
+
     bool IsValid() const;
 
     const std::string GetString() const;
@@ -71,6 +78,9 @@ namespace Sentry {
     Message(const std::string &message, const std::string &format_params, const MessageLevel &message_level = MessageLevel::MESSAGE_UNDEFINED);
     Message(const rapidjson::Value &json);
 
+    bool IsValid() const;
+
+    const MessageLevel& GetLevel() const;
     const std::string& GetMessage() const;
     const std::string& GetFormatParams() const;
     const std::map<std::string, std::string>& GetAdditionalFields() const;
@@ -102,6 +112,22 @@ namespace Sentry {
 
   inline MessageLevel::MessageLevel(const std::string &value) :
     _level(FromString(value)) {}
+
+  inline bool MessageLevel::operator==(const MessageLevel & other) const {
+    return (_level == other._level);
+  }
+
+  inline bool MessageLevel::operator!=(const MessageLevel & other) const {
+    return !(operator==(other));
+  }
+
+  inline bool MessageLevel::operator<(const MessageLevel & other) const {
+    return (_level < other._level);
+  }
+
+  inline bool MessageLevel::operator>(const MessageLevel & other) const {
+    return (_level > other._level);
+  }
 
   inline bool MessageLevel::IsValid() const {
     return (_level > MESSAGE_UNDEFINED);
@@ -163,6 +189,10 @@ namespace Sentry {
   
   }
 
+  inline const MessageLevel & Message::GetLevel() const {
+    return _level;
+  }
+
   inline const std::string & Message::GetMessage() const {
     return _message;
   }
@@ -179,6 +209,13 @@ namespace Sentry {
   */
   inline Message::Message(const rapidjson::Value &json) {
     FromJson(json);
+  }
+
+  inline bool Message::IsValid() const {
+    if (_message.empty()) {
+      return false;
+    }
+    return true;
   }
 
   /*! @brief Construct from a JSON object
@@ -201,6 +238,17 @@ namespace Sentry {
           if (member->value.IsString()) {
             _format_params = member->value.GetString();
           }
+        }
+      } else if (strcmp(member->name.GetString(), JSON_ELEM_LEVEL) == 0) {
+        if (!member->value.IsNull()) {
+          if (member->value.IsString()) {
+            std::string found_level = member->value.GetString();
+            _level = found_level;
+          } else {
+            std::cerr << "not a string";
+          }
+        } else {
+          std::cerr << "null";
         }
       } else {
         if (strlen(member->name.GetString()) > 0) {
@@ -230,7 +278,7 @@ namespace Sentry {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_FORMAT_PARAMS), format_params, allocator);
     }
 
-    if (!_level.IsValid()) {
+    if (_level.IsValid()) {
       rapidjson::Value level(rapidjson::kStringType);
       const std::string level_str = _level.GetString();
       level.SetString(level_str.data(), static_cast<rapidjson::SizeType>(level_str.size()), allocator);

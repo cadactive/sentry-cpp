@@ -8,6 +8,7 @@
 ***********************************************/
 #ifndef SENTRY_SDK_H_
 #define SENTRY_SDK_H_
+#include <string>
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
@@ -36,6 +37,8 @@ namespace Sentry {
   public:
     SDK();
     SDK(const rapidjson::Value &json);
+
+    bool IsValid() const;
 
     const std::string& GetName() const;
     const std::string& GetVersion() const;
@@ -73,6 +76,13 @@ namespace Sentry {
   */
   inline SDK::SDK(const rapidjson::Value &json) {
     FromJson(json);
+  }
+
+  inline bool SDK::IsValid() const {
+    if (_name.empty() || _version.empty()) {
+      return false;
+    }
+    return true;
   }
 
   /*! @brief Construct from a JSON object

@@ -8,6 +8,7 @@
 ***********************************************/
 #ifndef SENTRY_CONTEXT_H_
 #define SENTRY_CONTEXT_H_
+#include <string>
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
@@ -46,6 +47,8 @@ namespace Sentry {
     ContextGeneral(const std::string &type, const std::string &name);
     ContextGeneral(const rapidjson::Value &json);
 
+    bool IsValid() const;
+
     const std::string& GetType() const;
     const std::string& GetName() const;
 
@@ -59,6 +62,49 @@ namespace Sentry {
     std::string _name;
 
   }; // class ContextGeneral
+
+  /*! @brief
+  */
+  class ContextOS : public ContextGeneral {
+  public:
+    ContextOS(const std::string &name, const std::string &version, const std::string &build = std::string(), const std::string &kernel_version = std::string(), const bool &rooted = false);
+    ContextOS(const rapidjson::Value &json);
+
+    const std::string& GetVersion() const;
+    const std::string& GetBuild() const;
+    const std::string& GetKernelVersion() const;
+    const bool IsRooted() const;
+
+    void ToJson(rapidjson::Document &doc) const;
+
+  protected:
+    void FromJson(const rapidjson::Value &json);
+
+  private:
+    std::string _version;
+    std::string _build;
+    std::string _kernel_version;
+    bool _is_rooted;
+  }; // class ContextOS
+
+  /*! @brief
+  */
+  class ContextRuntime : public ContextGeneral {
+  public:
+    ContextRuntime(const std::string &name, const std::string &version);
+    ContextRuntime(const rapidjson::Value &json);
+
+    const std::string& GetVersion() const;
+
+    void ToJson(rapidjson::Document &doc) const;
+
+  protected:
+    void FromJson(const rapidjson::Value &json);
+
+  private:
+    std::string _version;
+
+  }; // class ContextRuntime
 
 } // namespace Sentry
 
@@ -87,6 +133,13 @@ namespace Sentry {
   */
   inline ContextGeneral::ContextGeneral(const rapidjson::Value &json) {
     FromJson(json);
+  }
+
+  inline bool ContextGeneral::IsValid() const {
+    if (_name.empty() || _type.empty()) {
+      return false;
+    }
+    return true;
   }
 
   /*! @brief Construct from a JSON object
@@ -133,30 +186,8 @@ namespace Sentry {
     }
   }
 
-  /*! @brief
+  /*
   */
-  class ContextOS : public ContextGeneral {
-  public:
-    ContextOS(const std::string &name, const std::string &version, const std::string &build, const std::string &kernel_version, const bool &rooted = false);
-    ContextOS(const rapidjson::Value &json);
-
-    const std::string& GetVersion() const;
-    const std::string& GetBuild() const;
-    const std::string& GetKernelVersion() const;
-    const bool IsRooted() const;
-
-    void ToJson(rapidjson::Document &doc) const;
-
-  protected:
-    void FromJson(const rapidjson::Value &json);
-
-  private:
-    std::string _version;
-    std::string _build;
-    std::string _kernel_version;
-    bool _is_rooted;
-  }; // class ContextOS
-
   inline Sentry::ContextOS::ContextOS(const std::string & name, const std::string & version, const std::string & build, const std::string & kernel_version, const bool & rooted) : 
     ContextGeneral(JSON_ELEM_CONTEXT_OS, name),
     _version(version), 
@@ -166,9 +197,10 @@ namespace Sentry {
 
   }
 
-  inline Sentry::ContextOS::ContextOS(const rapidjson::Value & json) : 
+  inline Sentry::ContextOS::ContextOS(const rapidjson::Value & json) :
+    _is_rooted(false),
     ContextGeneral(json) {
-
+    ContextOS::FromJson(json);
   }
 
   inline const std::string & Sentry::ContextOS::GetVersion() const {
@@ -232,7 +264,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void Sentry::ContextOS::ToJson(rapidjson::Document & doc) {
+  inline void Sentry::ContextOS::ToJson(rapidjson::Document & doc) const {
     ContextGeneral::ToJson(doc);
 
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
@@ -258,25 +290,8 @@ namespace Sentry {
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_ROOTED), _is_rooted, allocator);
   }
 
-  /*! @brief
+  /*!
   */
-  class ContextRuntime : public ContextGeneral {
-  public:
-    ContextRuntime(const std::string &name, const std::string &version);
-    ContextRuntime(const rapidjson::Value &json);
-
-    const std::string& GetVersion() const;
-
-    void ToJson(rapidjson::Document &doc) const;
-
-  protected:
-    void FromJson(const rapidjson::Value &json);
-
-  private:
-    std::string _version;
-
-  }; // class ContextRuntime
-
   inline Sentry::ContextRuntime::ContextRuntime(const std::string & name, const std::string & version) :
     ContextGeneral(JSON_ELEM_CONTEXT_RUNTIME, name),
     _version(version) {
@@ -285,7 +300,7 @@ namespace Sentry {
 
   inline Sentry::ContextRuntime::ContextRuntime(const rapidjson::Value & json) :
     ContextGeneral(json) {
-
+    ContextRuntime::FromJson(json);
   }
 
   inline const std::string & Sentry::ContextRuntime::GetVersion() const {
@@ -310,7 +325,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void Sentry::ContextRuntime::ToJson(rapidjson::Document & doc) {
+  inline void Sentry::ContextRuntime::ToJson(rapidjson::Document & doc) const {
     ContextGeneral::ToJson(doc);
 
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();

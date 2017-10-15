@@ -36,9 +36,11 @@ namespace Sentry {
   class Exception {
   public:
     Exception();
-    Exception(const std::string &type, const std::string &value, 
-      const std::string  &module, const Stacktrace &stacktrace, const int &thread_id = -1);
+    Exception(const std::string &type, const std::string &value, const std::string  &module,
+      const Stacktrace &stacktrace = Stacktrace(), const int &thread_id = -1);
     Exception(const rapidjson::Value &json);
+
+    bool IsValid() const;
 
     const std::string& GetType() const;
     const std::string& GetValue() const;
@@ -75,8 +77,8 @@ namespace Sentry {
   }
 
   inline Exception::Exception(
-    const std::string &type, const std::string &value, 
-    const std::string  &module, const Stacktrace &stacktrace, const int &thread_id) :
+    const std::string &type, const std::string &value, const std::string  &module,
+    const Stacktrace &stacktrace, const int &thread_id) :
     _type(type), _value(value), _module(module), _stacktrace(stacktrace), _thread_id(thread_id) {
 
   }
@@ -106,6 +108,13 @@ namespace Sentry {
   inline Exception::Exception(const rapidjson::Value &json) :
     _thread_id(-1) {
     FromJson(json);
+  }
+
+  inline bool Exception::IsValid() const {
+    if (_type.empty() || _value.empty()) {
+      return false;
+    }
+    return true;
   }
 
   /*!

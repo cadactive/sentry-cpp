@@ -54,10 +54,19 @@ namespace Sentry {
   */
   class Frame {
   public:
-    Frame();
+    Frame(const std::string &filename = std::string(), const std::string &function = std::string(), const std::string &module = std::string());
     Frame(const rapidjson::Value &json);
 
     bool IsValid() const;
+
+    // Required Members
+    const std::string& GetFilename() const;
+    const std::string& GetFunction() const;
+    const std::string& GetModule() const;
+
+    // Optional Members
+    bool IsInApp() const;
+    void SetIsInApp(const bool &in_app);
 
     void ToJson(rapidjson::Document &doc) const;
 
@@ -95,9 +104,11 @@ namespace Sentry {
 *	Method Definitions
 ***********************************************/
 namespace Sentry {
+
   /*!
   */
-  inline Frame::Frame() : 
+  inline Frame::Frame(const std::string &filename, const std::string &function, const std::string &module) :
+    _filename(filename), _function(function), _module(module),
     _lineno(-1), _colno(-1), _in_app(false) {
   }
 
@@ -109,13 +120,26 @@ namespace Sentry {
   }
 
   /*! @brief Determine if the frame has the required information
+  *   @details From API documentation - one of the three must exist
   */
   inline bool Frame::IsValid() const {
-    if (!_filename.empty() || _function.empty() || _module.empty()) {
-      return true;
+    if (_filename.empty() && _function.empty() && _module.empty()) {
+      return false;
     }
 
-    return false;
+    return true;
+  }
+
+  inline const std::string & Frame::GetFilename() const {
+    return _filename;
+  }
+
+  inline const std::string & Frame::GetFunction() const {
+    return _function;
+  }
+
+  inline const std::string & Frame::GetModule() const {
+    return _module;
   }
 
   /*! @brief Construct from a JSON object
@@ -289,6 +313,14 @@ namespace Sentry {
         }
       }
     } // instruction_offset
+  }
+
+  inline bool Frame::IsInApp() const {
+    return _in_app;
+  }
+
+  inline void Frame::SetIsInApp(const bool & in_app) { 
+    _in_app = in_app;
   }
 
   /*! @brief Convert to a JSON object
