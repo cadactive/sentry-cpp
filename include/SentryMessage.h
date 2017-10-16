@@ -36,26 +36,24 @@ namespace sentry {
   class Message {
   public:
     Message();
-    Message(const std::string &message, const  attributes::Level &message_level = attributes::Level::LEVEL_UNDEFINED);
-    Message(const std::string &message, const std::string &format_params, const  attributes::Level &message_level = attributes::Level::LEVEL_UNDEFINED);
+    Message(const std::string &message);
+    Message(const std::string &message, const std::string &format_params);
     Message(const rapidjson::Value &json);
 
     bool IsValid() const;
 
-    const attributes::Level& GetLevel() const;
     const std::string& GetMessage() const;
     const std::string& GetFormatParams() const;
     const std::map<std::string, std::string>& GetAdditionalFields() const;
     void SetAdditionalFields(const std::map<std::string, std::string>& additional_fields);
 
-    void ToJson(rapidjson::Document &doc) const;
+    void AddToJson(rapidjson::Document &doc) const;
 
   protected:
+    void ToJson(rapidjson::Document &doc) const;
     void FromJson(const rapidjson::Value &json);
 
   private:
-    std::string _title;
-    attributes::Level _level;
     std::string _message;
     std::string _format_params;
     std::map<std::string, std::string> _additional_fields;
@@ -73,18 +71,14 @@ namespace sentry {
   */
   inline Message::Message() {}
 
-  inline Message::Message(const std::string & message, const attributes::Level & message_level) :
-    _message(message), _level(message_level) {
+  inline Message::Message(const std::string & message) :
+    _message(message) {
 
   }
 
-  inline Message::Message(const std::string &message, const std::string &format_params, const attributes::Level &level) :
-    _message(message), _format_params(format_params), _level(level) {
+  inline Message::Message(const std::string &message, const std::string &format_params) :
+    _message(message), _format_params(format_params) {
   
-  }
-
-  inline const attributes::Level & Message::GetLevel() const {
-    return _level;
   }
 
   inline const std::string & Message::GetMessage() const {
@@ -101,6 +95,18 @@ namespace sentry {
 
   inline void Message::SetAdditionalFields(const std::map<std::string, std::string>& additional_fields) {
     _additional_fields = additional_fields;
+  }
+
+  inline void Message::AddToJson(rapidjson::Document & doc) const {
+    if (_format_params.empty() && _additional_fields.empty()) {
+      rapidjson::Value message(rapidjson::kStringType);
+      message.SetString(_message.data(), static_cast<rapidjson::SizeType>(_message.size()), doc.GetAllocator());
+      doc.AddMember(rapidjson::StringRef(JSON_ELEM_MESSAGE), message, doc.GetAllocator());
+    } else {
+      rapidjson::Document message_doc(&doc.GetAllocator());
+      ToJson(message_doc);
+      doc.AddMember(rapidjson::StringRef(sentry::JSON_ELEM_MESSAGE), message_doc, doc.GetAllocator());
+    }
   }
 
   /*!
@@ -137,17 +143,6 @@ namespace sentry {
             _format_params = member->value.GetString();
           }
         }
-      } else if (strcmp(member->name.GetString(), JSON_ELEM_LEVEL) == 0) {
-        if (!member->value.IsNull()) {
-          if (member->value.IsString()) {
-            std::string found_level = member->value.GetString();
-            _level = found_level;
-          } else {
-            std::cerr << "not a string";
-          }
-        } else {
-          std::cerr << "null";
-        }
       } else {
         if (strlen(member->name.GetString()) > 0) {
           if (member->value.IsString()) {
@@ -174,13 +169,6 @@ namespace sentry {
       rapidjson::Value format_params(rapidjson::kStringType);
       format_params.SetString(_format_params.data(), static_cast<rapidjson::SizeType>(_format_params.size()), allocator);
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_FORMAT_PARAMS), format_params, allocator);
-    }
-
-    if (_level.IsValid()) {
-      rapidjson::Value level(rapidjson::kStringType);
-      const std::string level_str = _level.GetString();
-      level.SetString(level_str.data(), static_cast<rapidjson::SizeType>(level_str.size()), allocator);
-      doc.AddMember(rapidjson::StringRef(JSON_ELEM_LEVEL), level, allocator);
     }
 
     for (auto additional = _additional_fields.cbegin(); additional != _additional_fields.cend(); ++additional) {
