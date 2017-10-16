@@ -16,7 +16,7 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_EXCEPTION = "exception";
 
@@ -24,12 +24,12 @@ namespace Sentry {
   const char * const JSON_ELEM_EXCEPTION_VALUE = "value";
   const char * const JSON_ELEM_EXCEPTION_MODULE = "module";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An Exception in Sentry
   */
@@ -62,12 +62,12 @@ namespace Sentry {
 
   }; // class Exception
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*!
   */
@@ -203,12 +203,12 @@ namespace Sentry {
 	  }
 
 	  if (!_stacktrace.IsValid()) {
-      rapidjson::Document subdoc;
+      rapidjson::Document subdoc(&allocator);
       _stacktrace.ToJson(subdoc);
 		  doc.AddMember(rapidjson::StringRef(JSON_ELEM_STACKTRACE), subdoc, allocator);
 	  }
 	}
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_EXCEPTION_H_

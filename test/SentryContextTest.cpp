@@ -9,7 +9,7 @@
 #include "SentryContext.h"
 #include <gtest\gtest.h>
 
-using namespace Sentry;
+using namespace sentry;
 using namespace rapidjson;
 
 /***********************************************

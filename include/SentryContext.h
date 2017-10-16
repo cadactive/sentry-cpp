@@ -16,7 +16,7 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_CONTEXTS = "contexts";
 
@@ -29,15 +29,15 @@ namespace Sentry {
   const char * const JSON_ELEM_OS_KERNEL_VERSION = "kernel_version";
   const char * const JSON_ELEM_OS_ROOTED = "rooted";
 
-  const char * const JSON_ELEM_CONTEXT_RUNTIME = "os";
+  const char * const JSON_ELEM_CONTEXT_RUNTIME = "runtime";
   const char * const JSON_ELEM_RUNTIME_VERSION = "version";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief A Context in Sentry
   */
@@ -106,12 +106,12 @@ namespace Sentry {
 
   }; // class ContextRuntime
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
   /*!
   */
   inline ContextGeneral::ContextGeneral() {}
@@ -188,7 +188,7 @@ namespace Sentry {
 
   /*
   */
-  inline Sentry::ContextOS::ContextOS(const std::string & name, const std::string & version, const std::string & build, const std::string & kernel_version, const bool & rooted) : 
+  inline ContextOS::ContextOS(const std::string & name, const std::string & version, const std::string & build, const std::string & kernel_version, const bool & rooted) : 
     ContextGeneral(JSON_ELEM_CONTEXT_OS, name),
     _version(version), 
     _build(build),
@@ -197,31 +197,31 @@ namespace Sentry {
 
   }
 
-  inline Sentry::ContextOS::ContextOS(const rapidjson::Value & json) :
+  inline ContextOS::ContextOS(const rapidjson::Value & json) :
     _is_rooted(false),
     ContextGeneral(json) {
     ContextOS::FromJson(json);
   }
 
-  inline const std::string & Sentry::ContextOS::GetVersion() const {
+  inline const std::string & ContextOS::GetVersion() const {
     return _version;
   }
 
-  inline const std::string & Sentry::ContextOS::GetBuild() const {
+  inline const std::string & ContextOS::GetBuild() const {
     return _build;
   }
 
-  inline const std::string & Sentry::ContextOS::GetKernelVersion() const {
+  inline const std::string & ContextOS::GetKernelVersion() const {
     return _kernel_version;
   }
 
-  inline const bool Sentry::ContextOS::IsRooted() const {
+  inline const bool ContextOS::IsRooted() const {
     return _is_rooted;
   }
 
   /*! @brief Construct from a JSON object
   */
-  inline void Sentry::ContextOS::FromJson(const rapidjson::Value & json) {
+  inline void ContextOS::FromJson(const rapidjson::Value & json) {
     if (json.IsNull()) { return; }
     if (!json.IsObject()) { return; }
 
@@ -264,7 +264,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void Sentry::ContextOS::ToJson(rapidjson::Document & doc) const {
+  inline void ContextOS::ToJson(rapidjson::Document & doc) const {
     ContextGeneral::ToJson(doc);
 
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
@@ -287,29 +287,29 @@ namespace Sentry {
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_KERNEL_VERSION), kernel_version, allocator);
     }
 
-    doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_ROOTED), _is_rooted, allocator);
+    // doc.AddMember(rapidjson::StringRef(JSON_ELEM_OS_ROOTED), _is_rooted, allocator);
   }
 
   /*!
   */
-  inline Sentry::ContextRuntime::ContextRuntime(const std::string & name, const std::string & version) :
+  inline ContextRuntime::ContextRuntime(const std::string & name, const std::string & version) :
     ContextGeneral(JSON_ELEM_CONTEXT_RUNTIME, name),
     _version(version) {
 
   }
 
-  inline Sentry::ContextRuntime::ContextRuntime(const rapidjson::Value & json) :
+  inline ContextRuntime::ContextRuntime(const rapidjson::Value & json) :
     ContextGeneral(json) {
     ContextRuntime::FromJson(json);
   }
 
-  inline const std::string & Sentry::ContextRuntime::GetVersion() const {
+  inline const std::string & ContextRuntime::GetVersion() const {
     return _version;
   }
 
   /*! @brief Construct from a JSON object
   */
-  inline void Sentry::ContextRuntime::FromJson(const rapidjson::Value & json) {
+  inline void ContextRuntime::FromJson(const rapidjson::Value & json) {
     if (json.IsNull()) { return; }
     if (!json.IsObject()) { return; }
 
@@ -325,7 +325,7 @@ namespace Sentry {
 
   /*! @brief Convert to a JSON object
   */
-  inline void Sentry::ContextRuntime::ToJson(rapidjson::Document & doc) const {
+  inline void ContextRuntime::ToJson(rapidjson::Document & doc) const {
     ContextGeneral::ToJson(doc);
 
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
@@ -337,6 +337,6 @@ namespace Sentry {
     }
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_CONTEXT_H_

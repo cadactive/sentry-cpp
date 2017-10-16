@@ -9,7 +9,7 @@
 #include "SentryThreads.h"
 #include <gtest\gtest.h>
 
-using namespace Sentry;
+using namespace sentry;
 using namespace rapidjson;
 
 /***********************************************
@@ -67,9 +67,10 @@ TEST(Threads, JSON) {
   EXPECT_EQ(true, some.IsValid());
 
   rapidjson::Document json;
-  some.ToJson(json);
+  json.SetObject();
+  some.AddToJson(json);
 
-  Threads some_json(json);
+  Threads some_json(json[JSON_ELEM_THREADS]);
   EXPECT_EQ(true, some_json.IsValid());
   EXPECT_EQ(true, some_json.GetThreads().size() == some.GetThreads().size());
   EXPECT_EQ(true, some_json.GetThreads().at(1).GetThreadID() == some.GetThreads().at(1).GetThreadID());

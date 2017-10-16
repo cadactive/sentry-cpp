@@ -19,19 +19,19 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_FRAMES = "frames";
   const char * const JSON_ELEM_FRAMES_OMITTED = "frames_omitted";
 
   const char * const JSON_ELEM_THREAD_ID = "thread_id";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An Stacktrace in Sentry
   *   @details Per Sentry Documentation, frames are ordered oldest call first
@@ -56,12 +56,12 @@ namespace Sentry {
 
   }; // class Stacktrace
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*!
   */
@@ -107,7 +107,7 @@ namespace Sentry {
       if (!frames.IsNull()) {
         if (frames.IsArray()) {
           for (rapidjson::Value::ConstValueIterator value = frames.Begin(); value != frames.End(); ++value) {
-            Sentry::Frame frame(*value);
+            Frame frame(*value);
             if (frame.IsValid()) {
               _frames.push_back(frame);
             }
@@ -127,7 +127,7 @@ namespace Sentry {
     for (auto frame = _frames.cbegin(); frame != _frames.cend(); ++frame) {
       if (!frame->IsValid()) { continue; }
 
-      rapidjson::Document frame_doc;
+      rapidjson::Document frame_doc(&allocator);
       frame->ToJson(frame_doc);
       
       frames.PushBack(frame_doc, allocator);
@@ -135,6 +135,6 @@ namespace Sentry {
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_FRAMES), frames, allocator);
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_STACKTRACE_H_

@@ -16,7 +16,7 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_THREADS = "threads";
   const char * const JSON_ELEM_THREADS_VALUES = "values";
@@ -25,12 +25,12 @@ namespace Sentry {
   const char * const JSON_ELEM_THREAD_CRASHED = "crashed";
   const char * const JSON_ELEM_THREAD_NAME = "name";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An Thread in Sentry
   */
@@ -50,7 +50,12 @@ namespace Sentry {
     const int& GetThreadID() const;
     const bool& IsCrashed() const;
     const bool& IsCurrent() const;
+    void SetIsCrashed(const bool &is_crashed);
+    void SetIsCurrent(const bool &is_current);
+
     const std::string& GetName() const;
+    void SetName(const std::string &thread_name);
+
     const Stacktrace& GetStacktrace() const;
 
     void ToJson(rapidjson::Document &doc) const;
@@ -79,21 +84,22 @@ namespace Sentry {
 
     const std::vector<Thread>& GetThreads() const;
 
-    void ToJson(rapidjson::Document &doc) const;
+    void AddToJson(rapidjson::Document &doc) const;
 
   protected:
+    void ToJson(rapidjson::Document &doc) const;
     void FromJson(const rapidjson::Value &json);
 
   private: 
     std::vector<Thread> _threads;
   }; // class Threads
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*!
   */
@@ -147,12 +153,24 @@ namespace Sentry {
     return _is_current;
   }
 
+  inline void Thread::SetIsCrashed(const bool &is_crashed) {
+    _is_crashed = is_crashed;
+  }
+
+  inline void Thread::SetIsCurrent(const bool &is_current) {
+    _is_current = is_current;
+  }
+
   inline const Stacktrace & Thread::GetStacktrace() const {
     return _stacktrace;
   }
 
   inline const std::string& Thread::GetName() const {
     return _name;
+  }
+
+  inline void Thread::SetName(const std::string & thread_name) {
+    _name = thread_name;
   }
 
   /*! @brief Construct from a JSON object
@@ -225,8 +243,8 @@ namespace Sentry {
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREAD_CURRENT), _is_current, allocator);
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREAD_CRASHED), _is_crashed, allocator);
 
-    if (!_stacktrace.IsValid()) {
-      rapidjson::Document subdoc;
+    if (_stacktrace.IsValid()) {
+      rapidjson::Document subdoc(&allocator);
       _stacktrace.ToJson(subdoc);
       doc.AddMember(rapidjson::StringRef(JSON_ELEM_STACKTRACE), subdoc, allocator);
     }
@@ -257,6 +275,14 @@ namespace Sentry {
     return _threads;
   }
 
+  /*! @brief Add the object to the parent json object
+  */
+  inline void Threads::AddToJson(rapidjson::Document & doc) const {
+    rapidjson::Document threads_doc(&doc.GetAllocator());
+    ToJson(threads_doc);
+    doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREADS), threads_doc, doc.GetAllocator());
+  }
+
   /*! @brief Construct from a JSON object
   */
   inline void Threads::FromJson(const rapidjson::Value & json) {
@@ -282,14 +308,13 @@ namespace Sentry {
 
     rapidjson::Value threads(rapidjson::kArrayType);
     for (auto thread = _threads.cbegin(); thread != _threads.end(); ++thread) {
-      rapidjson::Document subdoc;
+      rapidjson::Document subdoc(&allocator);
       thread->ToJson(subdoc);
-
       threads.PushBack(subdoc, allocator);
     }
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREADS_VALUES), threads, allocator);
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_THREADS_H_

@@ -17,7 +17,7 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_USER = "user";
 
@@ -26,12 +26,12 @@ namespace Sentry {
   const char * const JSON_ELEM_USER_USERNAME = "username";
   const char * const JSON_ELEM_USER_IP_ADDRESS = "ip_address";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An User in Sentry
   */
@@ -52,9 +52,10 @@ namespace Sentry {
     const std::map<std::string, std::string> &GetAdditionalFields() const;
     void SetAdditionalFields(const std::map<std::string, std::string>& additional_fields);
 
-    void ToJson(rapidjson::Document &doc) const;
+    void AddToJson(rapidjson::Document &doc) const;
 
   protected:
+    void ToJson(rapidjson::Document &doc) const;
     void FromJson(const rapidjson::Value &json);
 
   private:
@@ -66,12 +67,12 @@ namespace Sentry {
 
   }; // class User
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
   /*!
   */
   inline User::User() {}
@@ -107,6 +108,12 @@ namespace Sentry {
 
   inline void User::SetAdditionalFields(const std::map<std::string, std::string>& additional_fields) {
     _additional_fields = additional_fields;
+  }
+
+  inline void User::AddToJson(rapidjson::Document & doc) const {
+    rapidjson::Document user_doc(&doc.GetAllocator());
+    ToJson(user_doc);
+    doc.AddMember(rapidjson::StringRef(JSON_ELEM_USER), user_doc, doc.GetAllocator());
   }
 
   /*!
@@ -210,6 +217,6 @@ namespace Sentry {
     }
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_MESSAGE_H_

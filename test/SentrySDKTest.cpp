@@ -9,7 +9,7 @@
 #include "SentrySDK.h"
 #include <gtest\gtest.h>
 
-using namespace Sentry;
+using namespace sentry;
 using namespace rapidjson;
 
 /***********************************************
@@ -30,9 +30,10 @@ TEST(SDK, JSON) {
   EXPECT_EQ(true, some.IsValid());
 
   rapidjson::Document json;
-  some.ToJson(json);
+  json.SetObject();
+  some.AddToJson(json);
 
-  SDK some_json(json);
+  SDK some_json(json[JSON_ELEM_SDK]);
   EXPECT_EQ(true, some_json.IsValid());
   EXPECT_EQ(true, some_json.GetName() == some.GetName());
 }
