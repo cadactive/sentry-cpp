@@ -17,17 +17,17 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const CLIENT_NAME = "sentry-cpp";
   const char * const CLIENT_VERSION = "0.0.1.0";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An Client in Sentry
   */
@@ -74,12 +74,12 @@ namespace Sentry {
 
   }; // class Client
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   inline DSN::DSN(const std::string &dsn) {
     ParseDSN(dsn);
@@ -115,7 +115,7 @@ namespace Sentry {
   /*! @brief Parse the DSN Format (as per API):
   *   @details {PROTOCOL}://{PUBLIC_KEY}:{SECRET_KEY}@{HOST}/{PATH}{PROJECT_ID}
   */
-  inline void Sentry::DSN::ParseDSN(const std::string & dsn) {
+  inline void DSN::ParseDSN(const std::string & dsn) {
     std::string tmp_str;
 
     // Protocol
@@ -225,6 +225,6 @@ namespace Sentry {
     return timestamp;
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_CLIENT_H_

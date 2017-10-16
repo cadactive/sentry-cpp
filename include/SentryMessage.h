@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include "SentryAttributes.h"
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
@@ -18,70 +19,30 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_MESSAGE = "message";
   const char * const JSON_ELEM_FORMAT_PARAMS = "params";
-  const char * const JSON_ELEM_LEVEL = "level";
 
-  const char * const MESSAGE_TYPE_DEBUG = "debug";
-  const char * const MESSAGE_TYPE_INFO = "info";
-  const char * const MESSAGE_TYPE_WARNING = "warning";
-  const char * const MESSAGE_TYPE_ERROR = "error";
-  const char * const MESSAGE_TYPE_FATAL = "fatal";
-
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
-
-  /*! @brief A class describing the type of message
-  */
-  class MessageLevel {
-  public:
-    enum MessageLevelEnum {
-      MESSAGE_UNDEFINED = -1,
-      MESSAGE_DEBUG,
-      MESSAGE_INFO,
-      MESSAGE_WARNING,
-      MESSAGE_ERROR,
-      MESSAGE_FATAL
-    };
-
-    MessageLevel(const MessageLevelEnum &type = MessageLevel::MESSAGE_UNDEFINED);
-    MessageLevel(const std::string &value);
-
-    bool operator == (const MessageLevel& other) const;
-    bool operator != (const MessageLevel& other) const;
-    bool operator < (const MessageLevel& other) const;
-    bool operator > (const MessageLevel& other) const;
-
-    bool IsValid() const;
-
-    const std::string GetString() const;
-
-  protected:
-    static MessageLevelEnum FromString(const std::string &value);
-    static std::string ToString(const MessageLevelEnum &value);
-
-  private:
-    MessageLevelEnum _level;
-  }; // class MessageLevel
+namespace sentry {
 
   /*! @brief An Message in Sentry
   */
   class Message {
   public:
     Message();
-    Message(const std::string &message, const MessageLevel &message_level = MessageLevel::MESSAGE_UNDEFINED);
-    Message(const std::string &message, const std::string &format_params, const MessageLevel &message_level = MessageLevel::MESSAGE_UNDEFINED);
+    Message(const std::string &message, const  attributes::Level &message_level = attributes::Level::LEVEL_UNDEFINED);
+    Message(const std::string &message, const std::string &format_params, const  attributes::Level &message_level = attributes::Level::LEVEL_UNDEFINED);
     Message(const rapidjson::Value &json);
 
     bool IsValid() const;
 
-    const MessageLevel& GetLevel() const;
+    const attributes::Level& GetLevel() const;
     const std::string& GetMessage() const;
     const std::string& GetFormatParams() const;
     const std::map<std::string, std::string>& GetAdditionalFields() const;
@@ -94,109 +55,35 @@ namespace Sentry {
 
   private:
     std::string _title;
-    MessageLevel _level;
+    attributes::Level _level;
     std::string _message;
     std::string _format_params;
     std::map<std::string, std::string> _additional_fields;
 
   }; // class Message
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
-  /*!
-  */
-  inline MessageLevel::MessageLevel(const MessageLevelEnum & level) :
-    _level(level) {}
-
-  inline MessageLevel::MessageLevel(const std::string &value) :
-    _level(FromString(value)) {}
-
-  inline bool MessageLevel::operator==(const MessageLevel & other) const {
-    return (_level == other._level);
-  }
-
-  inline bool MessageLevel::operator!=(const MessageLevel & other) const {
-    return !(operator==(other));
-  }
-
-  inline bool MessageLevel::operator<(const MessageLevel & other) const {
-    return (_level < other._level);
-  }
-
-  inline bool MessageLevel::operator>(const MessageLevel & other) const {
-    return (_level > other._level);
-  }
-
-  inline bool MessageLevel::IsValid() const {
-    return (_level > MESSAGE_UNDEFINED);
-  }
-
-  inline const std::string MessageLevel::GetString() const {
-    return ToString(_level);
-  }
-
-  inline MessageLevel::MessageLevelEnum MessageLevel::FromString(const std::string &value) {
-    if (value == MESSAGE_TYPE_DEBUG) {
-      return MessageLevel::MESSAGE_DEBUG;
-
-    } else if (value == MESSAGE_TYPE_INFO) {
-      return MessageLevel::MESSAGE_INFO;
-
-    } else if (value == MESSAGE_TYPE_WARNING) {
-      return MessageLevel::MESSAGE_WARNING;
-
-    } else if (value == MESSAGE_TYPE_ERROR) {
-      return MessageLevel::MESSAGE_ERROR;
-
-    } else if (value == MESSAGE_TYPE_FATAL) {
-      return MessageLevel::MESSAGE_FATAL;
-    }
-    return MessageLevel::MESSAGE_UNDEFINED;
-  }
-
-  inline std::string MessageLevel::ToString(const MessageLevelEnum &value) {
-    switch (value) {
-    case MESSAGE_UNDEFINED:
-      return std::string();
-
-    case MESSAGE_DEBUG:
-      return MESSAGE_TYPE_DEBUG;
-
-    case MESSAGE_INFO:
-      return MESSAGE_TYPE_INFO;
-
-    case MESSAGE_WARNING:
-      return MESSAGE_TYPE_WARNING;
-
-    case MESSAGE_ERROR:
-      return MESSAGE_TYPE_ERROR;
-
-    case MESSAGE_FATAL:
-      return MESSAGE_TYPE_FATAL;
-
-    };
-    return std::string();
-  }
+namespace sentry {
 
   /*!
   */
   inline Message::Message() {}
 
-  inline Message::Message(const std::string & message, const MessageLevel & message_level) :
+  inline Message::Message(const std::string & message, const attributes::Level & message_level) :
     _message(message), _level(message_level) {
 
   }
 
-  inline Message::Message(const std::string &message, const std::string &format_params, const MessageLevel &level) :
+  inline Message::Message(const std::string &message, const std::string &format_params, const attributes::Level &level) :
     _message(message), _format_params(format_params), _level(level) {
   
   }
 
-  inline const MessageLevel & Message::GetLevel() const {
+  inline const attributes::Level & Message::GetLevel() const {
     return _level;
   }
 
@@ -307,6 +194,6 @@ namespace Sentry {
     }
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_MESSAGE_H_

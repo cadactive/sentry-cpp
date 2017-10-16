@@ -369,6 +369,7 @@
     <ClCompile Include="..\SentryStacktraceTest.cpp" />
     <ClCompile Include="..\SentryThreadsTest.cpp" />
     <ClCompile Include="..\SentryUserTest.cpp" />
+    <ClCompile Include="SentryAttributesTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

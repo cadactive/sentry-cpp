@@ -16,7 +16,7 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_THREADS = "threads";
   const char * const JSON_ELEM_THREADS_VALUES = "values";
@@ -25,12 +25,12 @@ namespace Sentry {
   const char * const JSON_ELEM_THREAD_CRASHED = "crashed";
   const char * const JSON_ELEM_THREAD_NAME = "name";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An Thread in Sentry
   */
@@ -84,21 +84,22 @@ namespace Sentry {
 
     const std::vector<Thread>& GetThreads() const;
 
-    void ToJson(rapidjson::Document &doc) const;
+    void AddToJson(rapidjson::Document &doc) const;
 
   protected:
+    void ToJson(rapidjson::Document &doc) const;
     void FromJson(const rapidjson::Value &json);
 
   private: 
     std::vector<Thread> _threads;
   }; // class Threads
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*!
   */
@@ -274,6 +275,14 @@ namespace Sentry {
     return _threads;
   }
 
+  /*! @brief Add the object to the parent json object
+  */
+  inline void Threads::AddToJson(rapidjson::Document & doc) const {
+    rapidjson::Document threads_doc(&doc.GetAllocator());
+    ToJson(threads_doc);
+    doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREADS), threads_doc, doc.GetAllocator());
+  }
+
   /*! @brief Construct from a JSON object
   */
   inline void Threads::FromJson(const rapidjson::Value & json) {
@@ -306,6 +315,6 @@ namespace Sentry {
     doc.AddMember(rapidjson::StringRef(JSON_ELEM_THREADS_VALUES), threads, allocator);
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_THREADS_H_

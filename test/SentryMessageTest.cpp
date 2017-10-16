@@ -9,7 +9,7 @@
 #include "SentryMessage.h"
 #include <gtest\gtest.h>
 
-using namespace Sentry;
+using namespace sentry;
 using namespace rapidjson;
 
 /***********************************************
@@ -17,26 +17,11 @@ using namespace rapidjson;
 ***********************************************/
 /*! @test Test a client
 */
-TEST(MessageLevel, Base) {
-  MessageLevel empty;
-  EXPECT_EQ(false, empty.IsValid());
-
-  MessageLevel some(MessageLevel::MESSAGE_INFO);
-  EXPECT_EQ(true, some.IsValid());
-  EXPECT_EQ(true, some > empty);
-
-  MessageLevel copy(some);
-  EXPECT_EQ(true, copy.IsValid());
-  EXPECT_EQ(true, some == copy);
-}
-
-/*! @test Test a client
-*/
 TEST(Message, Base) {
   Message empty;
   EXPECT_EQ(false, empty.IsValid());
 
-  Message some("abcd", "EXCEPTION_FOUND", MessageLevel::MESSAGE_INFO);
+  Message some("abcd", "EXCEPTION_FOUND", attributes::Level::LEVEL_INFO);
   EXPECT_EQ(true, some.IsValid());
 
   Message copy(some);

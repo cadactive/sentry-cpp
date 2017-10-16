@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "SentryAttributes.h"
 
 #include "rapidjson\rapidjson.h"
 #include "rapidjson\document.h"
@@ -18,7 +19,7 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const JSON_ELEM_STACKTRACE = "stacktrace";
 
@@ -37,18 +38,17 @@ namespace Sentry {
   const char * const JSON_ELEM_POST_CONTEXT = "post_context";
 
   const char * const JSON_ELEM_PACKAGE = "package";
-  const char * const JSON_ELEM_PLATFORM = "platform";
   const char * const JSON_ELEM_IMAGE_ADDR = "image_addr";
   const char * const JSON_ELEM_INSTRUCTION_ADDR = "instruction_addr";
   const char * const JSON_ELEM_SYMBOL_ADDR = "symbol_addr";
   const char * const JSON_ELEM_INSTRUCTION_OFFSET = "instruction_offset";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An Frame in Sentry
   */
@@ -101,12 +101,12 @@ namespace Sentry {
 
   }; // class Frame
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*!
   */
@@ -449,6 +449,6 @@ namespace Sentry {
     } // instruction_offset
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_FRAME_H_

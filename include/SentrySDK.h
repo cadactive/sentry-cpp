@@ -16,20 +16,21 @@
 /***********************************************
 *	Constants
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   const char * const SDK_NAME = "sentry_cpp";
   const char * const SDK_VERSION = "0.0.1.0";
 
+  const char * const JSON_ELEM_SDK = "sdk";
   const char * const JSON_ELEM_SDK_NAME = "name";
   const char * const JSON_ELEM_SDK_VERSION = "version";
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Classes
 ***********************************************/
-namespace Sentry {
+namespace sentry {
 
   /*! @brief An SDK in Sentry
   */
@@ -43,9 +44,10 @@ namespace Sentry {
     const std::string& GetName() const;
     const std::string& GetVersion() const;
 
-    void ToJson(rapidjson::Document &doc) const;
+    void AddToJson(rapidjson::Document &doc) const;
 
   protected:
+    void ToJson(rapidjson::Document &doc) const;
     void FromJson(const rapidjson::Value &json);
 
   private:
@@ -54,12 +56,12 @@ namespace Sentry {
 
   }; // class SDK
 
-} // namespace Sentry
+} // namespace sentry
 
 /***********************************************
 *	Method Definitions
 ***********************************************/
-namespace Sentry {
+namespace sentry {
   /*!
   */
   inline SDK::SDK() : _name(SDK_NAME), _version(SDK_VERSION) {}
@@ -83,6 +85,12 @@ namespace Sentry {
       return false;
     }
     return true;
+  }
+
+  inline void SDK::AddToJson(rapidjson::Document & doc) const {
+    rapidjson::Document sdk_doc(&doc.GetAllocator());
+    ToJson(sdk_doc);
+    doc.AddMember(rapidjson::StringRef(JSON_ELEM_SDK), sdk_doc, doc.GetAllocator());
   }
 
   /*! @brief Construct from a JSON object
@@ -129,6 +137,6 @@ namespace Sentry {
     }
   }
 
-} // namespace Sentry
+} // namespace sentry
 
 #endif // SENTRY_SDK_H_
