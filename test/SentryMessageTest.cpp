@@ -21,7 +21,7 @@ TEST(Message, Base) {
   Message empty;
   EXPECT_EQ(false, empty.IsValid());
 
-  Message some("abcd", "EXCEPTION_FOUND", attributes::Level::LEVEL_INFO);
+  Message some("abcd");
   EXPECT_EQ(true, some.IsValid());
 
   Message copy(some);
@@ -31,14 +31,15 @@ TEST(Message, Base) {
 /*! @test Test JSON methods
 */
 TEST(Message, JSON) {
-  Message some("abcd", "EXCEPTION_FOUND", MessageLevel::MESSAGE_INFO);
+  Message some("abcd");
   EXPECT_EQ(true, some.IsValid());
 
   rapidjson::Document json;
-  some.ToJson(json);
+  json.SetObject();
+
+  some.AddToJson(json);
   
-  Message some_json(json);
+  Message some_json(json[JSON_ELEM_MESSAGE]);
   EXPECT_EQ(true, some_json.IsValid());
-  EXPECT_EQ(true, some_json.GetLevel() == some.GetLevel());
   EXPECT_EQ(true, some_json.GetMessage() == some.GetMessage());
 }

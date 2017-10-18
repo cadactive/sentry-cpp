@@ -148,6 +148,7 @@
     <Import Project="properties\sentry-cpp.props" />
     <Import Project="properties\VS2015.props" />
     <Import Project="properties\include_rapidjson.props" />
+    <Import Project="properties\debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='VS2015-Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -172,18 +173,21 @@
     <Import Project="properties\sentry-cpp.props" />
     <Import Project="properties\VS2010.props" />
     <Import Project="properties\include_rapidjson.props" />
+    <Import Project="properties\debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='VS2012-Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\sentry-cpp.props" />
     <Import Project="properties\VS2012.props" />
     <Import Project="properties\include_rapidjson.props" />
+    <Import Project="properties\debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='VS2015-Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\sentry-cpp.props" />
     <Import Project="properties\VS2015.props" />
     <Import Project="properties\include_rapidjson.props" />
+    <Import Project="properties\debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='VS2015-Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -208,12 +212,14 @@
     <Import Project="properties\sentry-cpp.props" />
     <Import Project="properties\VS2010.props" />
     <Import Project="properties\include_rapidjson.props" />
+    <Import Project="properties\debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='VS2012-Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\sentry-cpp.props" />
     <Import Project="properties\VS2012.props" />
     <Import Project="properties\include_rapidjson.props" />
+    <Import Project="properties\debug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />

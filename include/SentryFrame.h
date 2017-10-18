@@ -209,7 +209,8 @@ namespace sentry {
               value = var->value.GetString();
             
             } else if (var->value.IsInt()) {
-              value = std::to_string(var->value.GetInt());
+              int i_val = var->value.GetInt();
+              value = std::to_string(i_val);
             }
 
             _vars[key] = value;
