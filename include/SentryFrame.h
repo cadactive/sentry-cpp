@@ -210,7 +210,9 @@ namespace sentry {
             
             } else if (var->value.IsInt()) {
               int i_val = var->value.GetInt();
-              value = std::to_string(i_val);
+              char str[21]; // based on number of characters in INT_MAX, especially in 64-bit numbers 
+              snprintf(str, 21, "%d", i_val);
+              value = str;
             }
 
             _vars[key] = value;
