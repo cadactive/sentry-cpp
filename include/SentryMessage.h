@@ -126,30 +126,33 @@ namespace sentry {
   */
   inline void Message::FromJson(const rapidjson::Value & json) {
     if (json.IsNull()) { return; }
-    if (!json.IsObject()) { return; }
+    if (json.IsObject()) {
 
-    // Looping so that we find "everything"
-    for (rapidjson::Value::ConstMemberIterator member = json.MemberBegin(); member != json.MemberEnd(); ++member) {
+      // Looping so that we find "everything"
+      for (rapidjson::Value::ConstMemberIterator member = json.MemberBegin(); member != json.MemberEnd(); ++member) {
 
-      if (strcmp(member->name.GetString(), JSON_ELEM_MESSAGE) == 0) {
-        if (!member->value.IsNull()) {
-          if (member->value.IsString()) {
-            _message = member->value.GetString();
+        if (strcmp(member->name.GetString(), JSON_ELEM_MESSAGE) == 0) {
+          if (!member->value.IsNull()) {
+            if (member->value.IsString()) {
+              _message = member->value.GetString();
+            }
           }
-        }
-      } else if (strcmp(member->name.GetString(), JSON_ELEM_FORMAT_PARAMS) == 0) {
-        if (!member->value.IsNull()) {
-          if (member->value.IsString()) {
-            _format_params = member->value.GetString();
+        } else if (strcmp(member->name.GetString(), JSON_ELEM_FORMAT_PARAMS) == 0) {
+          if (!member->value.IsNull()) {
+            if (member->value.IsString()) {
+              _format_params = member->value.GetString();
+            }
           }
-        }
-      } else {
-        if (strlen(member->name.GetString()) > 0) {
-          if (member->value.IsString()) {
-            _additional_fields[member->name.GetString()] = member->value.GetString();
+        } else {
+          if (strlen(member->name.GetString()) > 0) {
+            if (member->value.IsString()) {
+              _additional_fields[member->name.GetString()] = member->value.GetString();
+            }
           }
         }
       }
+    } else if (json.IsString()) {
+      _message = json.GetString();
     }
   }
 
