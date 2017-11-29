@@ -198,9 +198,17 @@ namespace sentry {
     }
 
     inline const std::string Timestamp::GetTimestampString() const {
-      char buf[sizeof("2011-10-08T07:07:09Z")];
-      strftime(buf, sizeof buf, "%FT%TZ", gmtime(&_timestamp));
-      return buf;
+      std::string out;
+      try {
+        char buf[100];
+        tm * time = gmtime(&_timestamp);
+        strftime(buf, sizeof(buf) + 1, "%Y-%m-%dT%H:%M:%SZ", time);
+        out = buf;
+      }
+      catch (...) {
+
+      }
+      return out;
     }
 
     inline bool Timestamp::IsValid() const {
