@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <stdio.h>
 #include "SentryAttributes.h"
 
 #include "rapidjson\rapidjson.h"
@@ -210,8 +211,8 @@ namespace sentry {
             
             } else if (var->value.IsInt()) {
               int i_val = var->value.GetInt();
-              char str[21]; // based on number of characters in INT_MAX, especially in 64-bit numbers 
-              snprintf(str, 21, "%d", i_val);
+              char str[21] = ""; // based on number of characters in INT_MAX, especially in 64-bit numbers 
+              sprintf(str, "%i", i_val);
               value = str;
             }
 
